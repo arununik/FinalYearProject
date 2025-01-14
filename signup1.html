@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employer Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen flex justify-center items-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-semibold text-center mb-6">Employer Registration</h2>
+    <form id="signupForm1" >
+      <div class="mb-4">
+        <label for="company-name" class="block text-sm font-medium text-gray-700">Company Name</label>
+        <input type="text" id="company-name" name="company_name" class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your company name" required>
+      </div>
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+        <input type="email" id="email" name="email" class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your email" required>
+      </div>
+      <div class="mb-4">
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" name="password" class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="w-full bg-indigo-500 text-white py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">Register</button>
+    </form>
+    <p class="mt-4 text-center text-sm">
+      Already have an account? <a href="login1.html" class="text-indigo-600 hover:text-indigo-500">Login</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('signupForm1').addEventListener('submit', async function (event) {
+        event.preventDefault();  // Prevent default form submission
+
+        const payload = {
+            company_name: document.getElementById('company-name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:3001/api/registerEmployer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message); // Show success message
+                window.location.href = 'login1.html'; // Redirect to login page
+            } else {
+                alert(result.message); // Show error message
+            }
+        } catch (error) {
+            alert('Error during registration. Please try again later.');
+        }
+    });
+</script>
+
+ 
+</body>
+</html>

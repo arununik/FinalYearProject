@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+        *{
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 10px;
+          background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+
+        .container {
+          max-width: 700px;
+          width: 100%;
+          background-color: #fff;
+          padding: 25px 30px;
+          border-radius: 5px;
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .container .title {
+          font-size: 25px;
+          font-weight: 500;
+          position: relative;
+          text-align: center;
+        }
+
+        .container .title::before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: -10px;
+          height: 3px;
+          width: 40px;
+          border-radius: 5px;
+          background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+
+        .content form .user-details {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          margin: 20px 0 12px 0;
+        }
+
+        form .user-details .input-box {
+          margin-bottom: 15px;
+          width: calc(100% / 2 - 20px);
+        }
+
+        form .input-box span.details {
+          display: block;
+          font-weight: 500;
+          margin-bottom: 5px;
+        }
+
+        .user-details .input-box input {
+          height: 45px;
+          width: 100%;
+          outline: none;
+          font-size: 16px;
+          border-radius: 5px;
+          padding-left: 15px;
+          border: 1px solid #ccc;
+          border-bottom-width: 2px;
+          transition: all 0.3s ease;
+        }
+
+        .user-details .input-box input:focus,
+        .user-details .input-box input:valid {
+          border-color: #9b59b6;
+        }
+
+        form .button {
+          height: 45px;
+          margin-top: 25px;
+        }
+
+        form .button input {
+          height: 100%;
+          width: 100%;
+          border-radius: 5px;
+          border: none;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 500;
+          letter-spacing: 1px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+
+        form .button input:hover {
+          background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+        }
+
+        @media(max-width: 584px) {
+          .container {
+            max-width: 100%;
+          }
+
+          form .user-details .input-box {
+            margin-bottom: 15px;
+            width: 100%;
+          }
+
+          form .button input {
+            font-size: 16px;
+          }
+        }
+
+        /* Toast styles */
+        #toast-container {
+          position: fixed;
+          top: 10%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1050;
+          max-width: 400px;
+          width: 100%;
+          padding: 10px;
+        }
+
+        .toast.bg-success {
+          background-color: #28a745; /* Green color */
+        }
+
+        .toast.bg-danger {
+          background-color: #dc3545; /* Red color */
+        }
+
+        .toast-body {
+          font-size: 16px;
+          padding: 10px;
+          font-weight: 600;
+        }
+
+        .btn-close-white {
+          color: #ffffff;
+          opacity: 1;
+          font-size: 0.5rem;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="title">Agent Sign Up</h2>
+        <form id="signupForm" class="space-y-4">
+            <div class="user-details">
+                <div class="input-box">
+                    <span class="details">Name:</span>
+                    <input type="text" id="name" class="w-full rounded-md border-gray-300" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Email:</span>
+                    <input type="email" id="email" class="w-full rounded-md border-gray-300" required>
+                </div>
+            </div>
+            <div class="input-box">
+                <span class="details">Password:</span>
+                <input type="password" id="password" class="w-full rounded-md border-gray-300" required>
+            </div>
+            <div class="button">
+                <input type="submit" value="Sign Up">
+            </div>
+        </form>
+        <p class="text-center mt-4"><a href="login.html" class="text-indigo-600">Already have an account? Login</a></p>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // Function to display success/error messages
+        function showToast(message, type) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.classList.add('toast', 'bg-success', 'mb-4'); // Default to success
+            if (type === 'error') {
+                toast.classList.replace('bg-success', 'bg-danger'); // Change to error color
+            }
+            
+            toast.innerHTML = `
+                <div class="toast-body">
+                    ${message}
+                    <button type="button" class="btn-close-white" onclick="this.parentElement.parentElement.remove()">X</button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Automatically hide the toast after 3 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const payload = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showToast(result.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html'; // Redirect after success
+                    }, 3000); // Redirect after 3 seconds
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error during registration. Please try again later.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

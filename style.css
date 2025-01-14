@@ -1,0 +1,371 @@
+/* Reset some styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Header Container */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* White background */
+  padding: 10px 30px;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  width: 40px; /* Logo size */
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.site-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.site-tagline {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* Menu Icon (Hamburger) */
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 20px;
+  width: 25px;
+  cursor: pointer;
+}
+.fx {
+  position: fixed;
+}
+.bar {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+}
+/* Style for Side Menu */
+.side-menu {
+  width: 250px;
+  height: 100vh;
+  background-color: #2D3748; /* Custom dark gray background */
+  color: white; /* Text color */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translateX(-250px);
+  transition: transform 0.3s ease;
+  z-index: 1050; /* Ensure the menu is above other content */
+}
+
+.side-menu.open {
+  transform: translateX(0);
+}
+
+.side-menu .close-btn {
+  text-align: right;
+  cursor: pointer;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-menu li {
+  margin-bottom: 1rem;
+}
+
+.side-menu a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.side-menu .arrow-box {
+  margin-left: 0.5rem;
+}
+
+.side-menu .menu-item:hover {
+  background-color: #4A5568; /* Darker gray background on hover */
+}
+
+.side-menu .account-item {
+  font-weight: bold;
+}
+
+.side-menu .help{
+  font-weight: bold;
+  align-items: left;
+}
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #fdf3e7; /* Light cream background */
+  color: #333;
+  line-height: 1.6;
+}
+
+/* FAQ Section Container */
+.faq-section {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.faq-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background-color: #ffffff; /* White card background */
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.faq-item:hover {
+  transform: translateY(-5px);
+}
+
+.faq-item h2 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.faq-item p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Statistics Section */
+.statistics {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.stat {
+  margin: 0 20px;
+}
+
+.stat h3 {
+  font-size: 2.5rem;
+  color: #6dbb6a; /* Green */
+  font-weight: bold;
+}
+
+.stat p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Join Section */
+.join-section {
+  background-color: #fff7ed; /* Light beige */
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.join-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Card Container */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.card {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.card-header {
+  background-color: #6dbb6a; /* Green */
+  color: #fff;
+  padding: 20px;
+}
+
+.card-header h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.card-header p {
+  font-size: 0.9rem;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.card-content p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #6dbb6a;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #599a56; /* Darker Green */
+}
+
+.hero {
+  background-image: url("C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\bg.png"); /* Replace with the image URL */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  z-index: 1; /* Higher z-index ensures it's above the side menu */
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Dark overlay for text visibility */
+}
+
+
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.btn1 {
+  display: inline-block;
+  text-decoration: none;
+  color: #333;
+  background-color: #fff;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.btn1:hover {
+  background-color: #444;
+  color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .statistics {
+    flex-direction: column;
+  }
+  
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero {
+    height: 60vh;
+  }
+}
+/* Navigation Links */
+.nav ul {
+  display: flex;
+  list-style: none;
+  justify-content: center;
+  padding: 0;
+}
+
+.nav ul li {
+  margin: 0 15px;
+}
+
+.nav ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 25px; /* Rounded corners */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav ul li a:hover {
+  background-color: #007BFF;
+  color: white;
+}
+
