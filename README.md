@@ -71,5 +71,5 @@ CREATE TABLE applications (
 
 
 INSERT INTO admin (email, codes)
-VALUES ('akrockzz2003@gmail.com', '123456');
+VALUES ('a@gmail.com', '123456');
 
