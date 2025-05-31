@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hiring Hub</title>
+  <link rel="stylesheet" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\style.css">
+</head>
+<body>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      position: fixed; /* Makes the header fixed */
+      top: 0;
+      left: 0;
+      width: 100%; /* Full width of the page */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #ffffff; /* White background */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      z-index: 1000; /* Ensures it stays on top */
+    }
+
+    .menu-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #333; /* Dark bars for hamburger icon */
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .site-title {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    .site-tagline {
+      font-size: 0.9em;
+      color: #666; /* Subtle text color */
+      margin: 0;
+    }
+
+    .icon-placeholder img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .nav ul li a:hover {
+      color: #007bff; /* Highlight color on hover */
+    }
+
+    .cta-button .btn {
+      text-decoration: none;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .cta-button .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px; /* Initially hidden */
+      width: 300px;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      transition: left 0.3s ease-in-out;
+      z-index: 1001;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu .close-btn {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-menu ul li {
+      margin: 15px 0;
+    }
+
+    .side-menu ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .side-menu ul li a:hover {
+      color: #007bff;
+    }
+
+    /* Open Side Menu */
+    .side-menu.open {
+      left: 0; /* Slide into view */
+    }
+
+    /* Add some content below the header for scrolling */
+    .content {
+      padding-top: 100px; /* Space for the fixed header */
+      padding: 20px;
+    }
+
+    #chatBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #chatContainer {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #chatInput {
+      flex: 1;
+      border: none;
+      padding: 10px;
+    }
+
+    #sendBtn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin: 5px 0;
+    }
+
+    .msg.bot { color: #007bff; }
+    .msg.user { color: #333; }
+  </style>
+</head>
+<body>
+<!-- Chat Button -->
+<button id="chatBtn">💬</button>
+
+<!-- Chat Interface -->
+<div id="chatContainer" style="display:none; flex-direction: column;">
+  <div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+  <div id="chatInputContainer">
+    <input id="chatInput" type="text" placeholder="Ask something..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  const chatBtn = document.getElementById("chatBtn");
+  const chatContainer = document.getElementById("chatContainer");
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  chatBtn.onclick = () => {
+  // Toggle visibility of chat container
+  if (chatContainer.style.display === "flex") {
+    chatContainer.style.display = "none"; // Hide the chat container
+  } else {
+    chatContainer.style.display = "flex"; // Show the chat container
+    if (chatMessages.children.length === 0) {
+      addMessage("bot", "Hi, how can I help?");
+    }
+  }
+};
+
+
+  sendBtn.onclick = sendMessage;
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function addMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `msg ${sender}`;
+    msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    addMessage("user", message);
+    chatInput.value = "";
+
+    try {
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      console.log(data); // Check the response from the server
+      addMessage("bot", data.reply);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  }
+</script>
+
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="menu-icon" id="menuIcon">
+      <!-- 3 Bars (Hamburger Icon) -->
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="header-title">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAc1JREFUWEftl4FNxDAMRX2TcEwCTHIwCTAJxyTAJLAJ9J0aybRO4h9AVIhI1VVqGr/+7zi+nW1s7DbGY38KaG9m12Z2YWaX0/2bu+7ne9mAUYUAeGpEA+5xen6nEo0AEeQ2GQilJCgVaKkMShD0OF1YyPUw/8LM85vJ0ufkB8hJjU1AMQhyFQQqUGUeUOc/BfTuFiYIwaIB1Gty7qf3FcvYUdjBwCKsaA2vJkqmbFOAfDJnklWdf/o4BcgndC1/vGKoiaoM1ETV7lCAfF6QO9jwqznE12V2mTJvpZiiEC8vd4+vM1Ed4p10Qqs5VL5mU5W6QJGsHB+oEg25QpdFVMt88Npp/zJNks4vv+hXgLpbeGTCCBDKUJNqdsFRygG/qQo9Yhk2HDogtXxK90YZhZZbfcSJolqrmJ7W7QHVOsPSEdbgzmYlSwtS5nU7yRZQBJM5VKOd6DvMZkloAdHPlMQdriszHetw7Pj1wqatBuR7H7n8V3xc5mLYAdSAvDqqTa2k98dO2NrWgHyr2kt8ZdctVVodvFEwb1emEVOAmOtbmJVtPaBM76wCNVvbCGioFxaoZCDqj//vJZ1FCbDm+t+ZsAmW/pR/oJ5Gm1PoAws+biVEOolCAAAAAElFTkSuQmCC" alt="Logo" class="logo-img">
+      <div>
+        <h1 class="site-title">Hiring Hub</h1>
+        <p class="site-tagline">Government of RAJASTHAN</p>
+      </div>
+    </div>
+    
+    
+    
+    <!-- Navigation Links -->
+    <nav class="nav">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#join-us">Join Us</a></li>
+        <li><a id="jobsLink" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\jobs.html">Jobs</a></li>
+      
+      </ul>
+    </nav>
+
+    <!-- Get Started Button -->
+    <div class="cta-button">
+      <a id="va" href="viewapplications.html" class="btn">My Applications</a>
+    </div>
+  </div>
+  </header>
+
+  <!-- Side Menu -->
+  <nav class="side-menu" id="sideMenu">
+    <div class="close-btn" id="closeBtn">&times;</div>
+    <ul>
+      <li>
+        <a href="login.html" class="menu-item account-item">
+          <strong>Account</strong>
+          <span id="userEmail"></span>
+          <span class="arrow-box">&rarr;</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html" class="menu-item account-item" id="logoutLink">Logout</a>
+      </li>
+      <li>
+        <a href="#" class="menu-item account-item">
+          <strong>Help</strong>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <script>
+    // Menu toggle
+    const menuIcon = document.getElementById("menuIcon");
+    const sideMenu = document.getElementById("sideMenu");
+    const closeBtn = document.getElementById("closeBtn");
+
+    menuIcon.addEventListener("click", () => {
+      sideMenu.classList.add("open");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+  </script>
+  <section id="home-section" class="hero">
+    <div class="content">
+      <h1 class="title">Join Here</h1>
+      <p class="subtitle">
+        Transforming Lives Through Job Opportunities in India!
+      </p>
+      <a href="#" class="btn1">Learn More</a>
+    </div>
+  </section>
+  <section class="faq-section">
+    <h1>Your Questions, Answered!</h1>
+
+    <div class="faq-container">
+      <!-- Question 1 -->
+      <div class="faq-item">
+        <h2>What is Hiring hub all about?</h2>
+        <p>Hiring Hub is your gateway to becoming a successful job seeker or employer, where candidates can apply for jobs and get hired, while companies find the right talent effortlessly.
+          !</p>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="faq-item">
+        <h2>How does the application process work?</h2>
+        <p>Simply sign up, get educated, and apply!</p>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="faq-item">
+        <h2>Why become a successful persom?</h2>
+        <p>Unlock financial freedom and help others!</p>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="faq-item">
+        <h2>Is training provided?</h2>
+        <p>Absolutely! We offer comprehensive training programs.</p>
+      </div>
+
+      <!-- Question 5 -->
+      <div class="faq-item">
+        <h2>What if I have no experience?</h2>
+        <p>No worries! We welcome beginners with open arms!</p>
+      </div>
+    </div>
+  </section>
+  <section class="statistics">
+    <div class="stat">
+      <h3>3.49%</h3>
+      <p>Current Penetration</p>
+    </div>
+    <div class="stat">
+      <h3>100%</h3>
+      <p>Untapped Potential</p>
+    </div>
+    <div class="stat">
+      <h3>1 Lakh</h3>
+      <p>Employees Needed!</p>
+    </div>
+  </section>
+  
+  <div>
+    <h1>
+  <marquee behavior="scroll" direction="left">
+    Join the Revolution * Connect with Recruiters * Streamlined Applications * Empower your Future * Educate and Engage * Unlock Opportunities *
+</marquee>
+</h1>
+</div>
+<div>
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .header12 {
+            background-color: #ffa500; /* Orange background */
+            padding: 20px;
+            color: white;
+        }
+        .header12 button {
+            background-color: #66cc66; /* Green button */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .header12 button:hover {
+            background-color: #55aa55;
+        }
+        .partners-section {
+            padding: 40px;
+        }
+        .partners-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .partners-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .partner-card {
+            width: 150px;
+            height: 100px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .partner-card img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+
+<div class="header12">
+  <p>Join us in transforming the insurance landscape!</p>
+  <button>Get Started Now!</button>
+</div>
+<div class="partners-section">
+  <h2>Our Trusted Partners</h2>
+  <div class="partners-grid">
+      <div class="partner-card">
+          <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\1.jpg" alt="Nashville">
+      </div>
+      <div class="partner-card">
+          <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\2.jpg" alt="Leica">
+      </div>
+      <div class="partner-card">
+          <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\3.jpg" alt="Surf Coffee">
+      </div>
+      <div class="partner-card">
+          <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\4.jpg" alt="Louis Vuitton">
+      </div>
+      <div class="partner-card">
+          <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\5.png" alt="Red Bull">
+      </div>
+      <div class="partner-card">
+          <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\6.png" alt="Google">
+      </div>
+  </div>
+</div>
+</div>
+
+
+
+<div>
+  <style>
+
+    .section12 {
+        padding: 40px 20px;
+    }
+    .section12 h2 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .grid1 {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .grid1-item {
+        width: 200px;
+        height: 150px;
+        background-color: #f9f9f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .grid1-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+  <div class="section12">
+    <h2>Visualize Your Future</h2>
+    <div class="grid1">
+        <div class="grid1-item">
+            <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\image1.jpg" alt="Golf example">
+        </div>
+        <div class="grid1-item">
+            <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\image2.jpg" alt="Possible chalkboard">
+        </div>
+        <div class="grid1-item">
+            <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\image3.jpg" alt="Stacking blocks">
+        </div>
+        <div class="grid1-item">
+            <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\images\image4.jpg" alt="Back of person">
+        </div>
+    </div>
+</div>
+</div>
+
+<div>
+  <style>
+
+.section1 {
+    max-width: 800px;
+    margin: 50px auto; /* Center the content with margin */
+    padding: 20px;
+    /* White background for the text section */
+  
+
+}
+.section1 h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center; /* Center the heading */
+}
+.section1 p {
+    line-height: 1.6; /* Line height for better readability */
+    margin-bottom: 20px;
+    text-align: justify; /* Justify the text */
+}
+</style>
+<div class="section1">
+  <h2>Empowering Future Employees</h2>
+  <p>
+      Welcome to the revolution in insurance! We're not just another platform; we're the bridge connecting 
+      aspiring agents to a world of opportunities. With insurance penetration in India at a mere 3.93% of 
+      GDP, we see a goldmine of potential waiting to be tapped. Our mission? To transform the insurance 
+      landscape by educating and empowering the next generation of agents
+      Imagine a platform where you can learn, engage, and apply to become an insurance agent – all in one 
+      place! We're here to demystify the process and make it as easy as pie. Whether you're unemployed, 
+      underemployed, or just looking for a change, we've got your back. Our goal is to create a community 
+      that thrives on knowledge and opportunity, turning the tide of insurance in India.
+      Join us on this exciting journey! Let's break the barriers, shatter the stereotypes, and build a future 
+      where insurance is not just a necessity but a thriving career choice. Together, we can make a difference!
+      </p>
+</div>
+</div>
+
+<div>
+<style>
+
+  .container1 {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  h1 {
+    font-size: 36px;
+    margin-bottom: 30px;
+  }
+  .testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  .testimonial {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+  }
+  .testimonial img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+  }
+  .testimonial h3 {
+    font-size: 18px;
+    margin: 10px 0;
+    font-weight: bold;
+  }
+  .testimonial p {
+    font-size: 16px;
+    color: #555;
+  }
+</style>
+
+<div class="container1">
+  <h1>Success</h1>
+  <div class="testimonials">
+    <div class="testimonial">
+      <img src="C:\Users\arunn\OneDrive\Pictures\Screenshots\Screenshot 2025-05-06 233315.png" alt="Arun">
+      <h3>Arun Kumar</h3>
+      <p>This platform changed my life! I never thought I could be an agent.</p>
+    </div>
+    <div class="testimonial">
+      <img src="C:\Users\arunn\OneDrive\Pictures\Screenshots\Screenshot 2025-05-06 233245.png" alt="Harshala">
+      <h3>Harshala Gowda N</h3>
+      <p>I found my passion here! The support is incredible.</p>
+    </div>
+    <div class="testimonial">
+      <img src="C:\Users\arunn\OneDrive\Pictures\Screenshots\Screenshot 2025-05-06 233334.png" alt="Abiyah">
+      <h3>Abiyah Philip</h3>
+      <p>I was clueless, but now I'm thriving as an agent.</p>
+    </div>
+    <div class="testimonial">
+      <img src="C:\Users\arunn\OneDrive\Pictures\Screenshots\Screenshot 2025-05-06 233358.png" alt="Vishnu S">
+      <h3>Vishnu S</h3>
+      <p>The training was top-notch! I feel ready to conquer the world.</p>
+    </div>
+  
+  </div>
+</div>
+</div>
+<div>
+  <style>
+
+
+.container2 {
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.card2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+.card2 {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.card2:hover {
+  transform: translateY(-5px);
+}
+.card2 img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.card2-content {
+  padding: 20px;
+}
+.card2-content h3 {
+  font-size: 18px;
+  margin: 15px 0 10px;
+  color: #333;
+}
+.card2-content p {
+  font-size: 14px;
+  color: #666;
+}
+.card2-content .date {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 10px;
+}
+.card2-content .btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #5cb85c;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+.card2-content .btn:hover {
+  background-color: #4cae4c;
+}
+</style>
+
+<div id="join-us" class="container2">
+  <div class="card2-grid">
+    <div class="card2">
+      <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\uploads\meet1.jpeg" alt="New Training Program">
+      <div class="card2-content">
+        <h3>New Training Program Launched!</h3>
+        <p class="date">December 10, 2024</p>
+        <p>Join our new training program and kickstart your career as an insurance agent! Sign up now!</p>
+        <a href="meet1.html" class="btn">Meet</a>
+      </div>
+    </div>
+    <div class="card2">
+      <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\uploads\meet2.jpeg" alt="Success Stories">
+      <div class="card2-content">
+        <h3>Success Stories from Our Agents</h3>
+        <p class="date">December 5, 2024</p>
+        <p>Read inspiring stories from agents who transformed their lives with us! Get motivated!</p>
+        <a href="meet2.html" class="btn">Meet</a>
+      </div>
+    </div>
+    <div class="card2">
+      <img src="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\uploads\meet3.jpeg" alt="Webinar">
+      <div class="card2-content">
+        <h3>Webinar on Insurance Opportunities</h3>
+        <p class="date">November 30, 2024</p>
+        <p>Don't miss our upcoming webinar discussing the vast opportunities in the insurance sector! Register today!</p>
+        <a href="meet3.html" class="btn">Meet</a>
+      </div>
+    </div>
+    <div class="card2">
+      <img src="C:\Users\arunn\OneDrive\Pictures\Screenshots\Screenshot 2025-05-06 233704.png" alt="Meet Our Top Agents">
+      <div class="card2-content">
+        <h3>Meet Our Top Agents!</h3>
+        <p class="date">November 25, 2024</p>
+        <p>Get to know the faces behind our success! Meet our top agents and their journeys!</p>
+        <a href="meet4.html" class="btn">Meet</a>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+
+<div>
+  <style>
+   
+    .section3 {
+     
+      text-align: center;
+    }
+    
+    .social-section h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .social-icons a {
+      font-size: 24px;
+      color: #333;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: #5cb85c;
+    }
+   
+    .contact-section h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+    }
+    .contact-form textarea {
+      resize: none;
+      height: 100px;
+    }
+    .contact-form button {
+      padding: 10px 25px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #5cb85c;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .contact-form button:hover {
+      background-color: #4cae4c;
+    }
+  </style>
+
+
+<!-- Social Media Section -->
+<div id="about" class="section3 social-section">
+  <h2>Join Our Adventure!</h2>
+  <div class="social-icons">
+    <a href="#" title="Facebook">🌐</a>
+    <a href="#" title="X (formerly Twitter)">❌</a>
+    <a href="#" title="Instagram">📸</a>
+    <a href="#" title="LinkedIn">🔗</a>
+    <a href="#" title="Twitch">🎮</a>
+  </div>
+</div>
+
+<!-- Contact Form Section -->
+<div class="section3 contact-section">
+  <h2>Get in Touch!</h2>
+  <form class="contact-form" action="#" method="post">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <textarea name="message" placeholder="Message" required></textarea>
+    <button type="submit">Send It!</button>
+  </form>
+</div>
+
+</div>
+
+
+  <script>
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+        document.getElementById('userEmail').textContent = `(${email})`;
+    }
+
+    // Logout functionality
+    document.getElementById('logoutLink').addEventListener('click', () => {
+        localStorage.removeItem('userEmail');
+        window.location.href = 'login.html';  // Redirect to index.html
+    });
+</script>
+
+
+  </script>
+
+  <script>
+    // Extract user_id from the URL (if present)
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+    
+    document.getElementById('va').href = `viewapplications.html?user_id=${userId}`;
+  
+    // If user_id exists, dynamically set the Jobs link
+    if (userId) {
+      const jobsLink = document.getElementById('jobsLink');
+      const subs=document.getElementById('subs');
+      jobsLink.href = `jobs.html?user_id=${userId}`;  
+      subs.href = `subscriptions.html?user_id=${userId}`;  // Append user_id to the Jobs link
+    }
+  </script>
+<br></br>
+<footer style="background-color: #1f2937; color: white; padding: 2rem 0;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+    <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+
+      <!-- About Us -->
+      <div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">About Us</h3>
+        <p style="font-size: 0.875rem; color: #d1d5db;">
+          We connect job seekers with top companies worldwide. Find your dream job today!
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Quick Links</h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li id="home-section" style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">Home</a></li>
+          <li style="margin-bottom: 0.5rem;"><a id="jobsLink" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\jobs.html" style="color: white; text-decoration: none; transition: color 0.3s;">Jobs</a></li>
+          <li style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">About Us</a></li>
+          <li style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Support</h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">Help Center</a></li>
+          <li style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">Contact Us</a></li>
+          <li style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">Terms of Service</a></li>
+          <li style="margin-bottom: 0.5rem;"><a href="#" style="color: white; text-decoration: none; transition: color 0.3s;">Privacy Policy</a></li>
+        </ul>
+      </div>
+
+      <!-- Social Media -->
+      <div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Follow Us</h3>
+        <div style="display: flex; gap: 1rem;">
+          <a href="#" style="color: white; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" style="color: white; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-twitter"></i></a>
+          <a href="#" style="color: white; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" style="color: white; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="border-top: 1px solid #374151; margin-top: 2rem; padding-top: 1rem; text-align: center;">
+      <p style="font-size: 0.875rem; color: #d1d5db;">&copy; 2024 Job Platform. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Add FontAwesome for social media icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+</body>
+</html>
+
+</body>
+</html>

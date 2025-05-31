@@ -1,0 +1,73 @@
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    role ENUM('job_seeker','employer') NOT NULL,
+    reset_code VARCHAR(6),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE employers (
+    employer_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    company_name VARCHAR(100),
+    company_description TEXT,
+    name VARCHAR(100),
+    password VARCHAR(255),
+    email VARCHAR(100) UNIQUE,
+    reset_code VARCHAR(100),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+
+
+CREATE TABLE jobs (
+    job_id INT AUTO_INCREMENT PRIMARY KEY,
+    employer_id INT,
+    title VARCHAR(100),
+    description TEXT,
+    requirements TEXT,
+    salary DECIMAL(10,2),
+    location VARCHAR(100),
+    skill_set_1 VARCHAR(50),
+    skill_set_2 VARCHAR(50),
+    skill_set_3 VARCHAR(50),
+    interview_type ENUM('offline','online'),
+    company VARCHAR(255),
+    interview_date VARCHAR(255),
+    FOREIGN KEY (employer_id) REFERENCES employers(employer_id)
+);
+
+
+CREATE TABLE applications (
+    application_id INT AUTO_INCREMENT PRIMARY KEY,
+    job_id INT,
+    user_id INT,
+    name VARCHAR(100),
+    education VARCHAR(100),
+    experience INT,
+    contact VARCHAR(15),
+    skills TEXT,
+    resume_path VARCHAR(255),
+    status ENUM('pending','accepted','rejected') DEFAULT 'pending',
+    cgpa DECIMAL(4,2),
+    is_applied TINYINT(1) DEFAULT 0,
+    reason VARCHAR(255),
+    employer_id INT,
+    company VARCHAR(100),
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (employer_id) REFERENCES employers(employer_id)
+);
+
+
+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
+
+
+
+INSERT INTO admin (email, codes)
+VALUES ('akrockzz2003@gmail.com', '123456');
+

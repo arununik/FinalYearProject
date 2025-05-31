@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employer Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+  
+  #chatBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #chatContainer {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #chatInput {
+      flex: 1;
+      border: none;
+      padding: 10px;
+    }
+
+    #sendBtn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin: 5px 0;
+    }
+
+    .msg.bot { color: #007bff; }
+    .msg.user { color: #333; }
+  </style>
+</head>
+<body>
+<!-- Chat Button -->
+<button id="chatBtn">💬</button>
+
+<!-- Chat Interface -->
+<div id="chatContainer" style="display:none; flex-direction: column;">
+  <div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+  <div id="chatInputContainer">
+    <input id="chatInput" type="text" placeholder="Ask something..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  const chatBtn = document.getElementById("chatBtn");
+  const chatContainer = document.getElementById("chatContainer");
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+  chatBtn.onclick = () => {
+  // Toggle visibility of chat container
+  if (chatContainer.style.display === "flex") {
+    chatContainer.style.display = "none"; // Hide the chat container
+  } else {
+    chatContainer.style.display = "flex"; // Show the chat container
+    if (chatMessages.children.length === 0) {
+      addMessage("bot", "Hi, how can I help?");
+    }
+  }
+};
+
+  sendBtn.onclick = sendMessage;
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function addMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `msg ${sender}`;
+    msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    addMessage("user", message);
+    chatInput.value = "";
+
+    try {
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      console.log(data); // Check the response from the server
+      addMessage("bot", data.reply);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  }
+</script>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+  <a href="index.html" class="absolute top-4 left-4 text-blue-600 font-semibold underline hover:text-blue-800">
+    Home
+  </a>
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">Employer Sign Up</h2>
+
+    <form id="signupForm" class="space-y-4" enctype="multipart/form-data">
+      <!-- Name -->
+      <input type="text" id="name" placeholder="Name" required 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Email -->
+      <input type="email" id="email" placeholder="Email" required 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Password -->
+      <input type="password" id="password" placeholder="Password" required 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Company Name -->
+      <input type="text" id="company_name" placeholder="Company Name" required 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Address -->
+      <textarea id="address" placeholder="Address" required 
+                class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+
+      <!-- Website -->
+      <input type="url" id="website" placeholder="Website" 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Phone Number -->
+      <input type="tel" id="phone" placeholder="Phone Number" required 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Certificate Upload -->
+      <input type="file" id="certificate" name="certificate" accept=".pdf,.jpg,.png" required 
+             class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+      <!-- Error Message -->
+      <div id="error-message" class="text-sm text-red-500"></div>
+
+      <!-- Submit -->
+      <button type="submit" 
+              class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 focus:outline-none">
+        Sign Up
+      </button>
+    </form>
+
+    <p class="text-sm mt-4 text-center">
+      Already have an account? <a href="login2.html" class="text-blue-600 hover:text-blue-800">Login</a>
+    </p>
+  </div>
+
+  <script>
+    function isValidPassword(password) {
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasDigit = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*]/.test(password);
+  
+  return password.length >= minLength && hasUpperCase && hasDigit && hasSpecialChar;
+}
+
+
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const company_name = document.getElementById('company_name').value;
+      const address = document.getElementById('address').value;
+      const website = document.getElementById('website').value;
+      const phone = document.getElementById('phone').value;
+      const certificate = document.getElementById('certificate').files[0];
+      const errorMsg = document.getElementById('error-message');
+
+      if (!isValidPassword(password)) {
+        errorMsg.textContent = "Password must be at least 8 characters and include a number, special character, or uppercase letter.";
+        return;
+      } else {
+        errorMsg.textContent = "";
+      }
+
+      // FormData to handle file upload along with other form data
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('company_name', company_name);
+      formData.append('address', address);
+      formData.append('website', website);
+      formData.append('phone', phone);
+      formData.append('certificate', certificate);
+
+      try {
+        const res = await fetch('http://localhost:5000/api/employer/register', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert(data.message);
+          window.location.href = 'login2.html';
+        } else {
+          alert(data.message || "Signup failed.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong. Please try again.");
+      }
+    });
+  </script>
+
+</body>
+</html>

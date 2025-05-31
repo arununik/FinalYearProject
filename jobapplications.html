@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Hub</title>
+  <link rel="stylesheet" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+</head>
+<body>
+  <style>
+        #toast-container {
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1050; /* Ensure the toast is above other content */
+      max-width: 400px; /* Limit the width of the toast */
+      width: 100%;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      position: fixed; /* Makes the header fixed */
+      top: 0;
+      left: 0;
+      width: 100%; /* Full width of the page */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #ffffff; /* White background */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      z-index: 1000; /* Ensures it stays on top */
+    }
+
+    .menu-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #333; /* Dark bars for hamburger icon */
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .site-title {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    .site-tagline {
+      font-size: 0.9em;
+      color: #666; /* Subtle text color */
+      margin: 0;
+    }
+
+    .icon-placeholder img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .nav ul li a:hover {
+      color: #007bff; /* Highlight color on hover */
+    }
+
+    .cta-button .btn {
+      text-decoration: none;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .cta-button .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px; /* Initially hidden */
+      width: 300px;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      transition: left 0.3s ease-in-out;
+      z-index: 1001;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu .close-btn {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-menu ul li {
+      margin: 15px 0;
+    }
+
+    .side-menu ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .side-menu ul li a:hover {
+      color: #007bff;
+    }
+
+    /* Open Side Menu */
+    .side-menu.open {
+      left: 0; /* Slide into view */
+    }
+
+    /* Add some content below the header for scrolling */
+    .content {
+      padding-top: 100px; /* Space for the fixed header */
+      padding: 20px;
+    }
+
+    #chatBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #chatContainer {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #chatInput {
+      flex: 1;
+      border: none;
+      padding: 10px;
+    }
+
+    #sendBtn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin: 5px 0;
+    }
+
+    .msg.bot { color: #007bff; }
+    .msg.user { color: #333; }
+  </style>
+</head>
+<body>
+<!-- Chat Button -->
+<button id="chatBtn">💬</button>
+
+<!-- Chat Interface -->
+<div id="chatContainer" style="display:none; flex-direction: column;">
+  <div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+  <div id="chatInputContainer">
+    <input id="chatInput" type="text" placeholder="Ask something..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  const chatBtn = document.getElementById("chatBtn");
+  const chatContainer = document.getElementById("chatContainer");
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+  chatBtn.onclick = () => {
+  // Toggle visibility of chat container
+  if (chatContainer.style.display === "flex") {
+    chatContainer.style.display = "none"; // Hide the chat container
+  } else {
+    chatContainer.style.display = "flex"; // Show the chat container
+    if (chatMessages.children.length === 0) {
+      addMessage("bot", "Hi, how can I help?");
+    }
+  }
+};
+
+  sendBtn.onclick = sendMessage;
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function addMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `msg ${sender}`;
+    msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    addMessage("user", message);
+    chatInput.value = "";
+
+    try {
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      console.log(data); // Check the response from the server
+      addMessage("bot", data.reply);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  }
+</script>
+
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="menu-icon" id="menuIcon">
+      <!-- 3 Bars (Hamburger Icon) -->
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="header-title">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAc1JREFUWEftl4FNxDAMRX2TcEwCTHIwCTAJxyTAJLAJ9J0aybRO4h9AVIhI1VVqGr/+7zi+nW1s7DbGY38KaG9m12Z2YWaX0/2bu+7ne9mAUYUAeGpEA+5xen6nEo0AEeQ2GQilJCgVaKkMShD0OF1YyPUw/8LM85vJ0ufkB8hJjU1AMQhyFQQqUGUeUOc/BfTuFiYIwaIB1Gty7qf3FcvYUdjBwCKsaA2vJkqmbFOAfDJnklWdf/o4BcgndC1/vGKoiaoM1ETV7lCAfF6QO9jwqznE12V2mTJvpZiiEC8vd4+vM1Ed4p10Qqs5VL5mU5W6QJGsHB+oEg25QpdFVMt88Npp/zJNks4vv+hXgLpbeGTCCBDKUJNqdsFRygG/qQo9Yhk2HDogtXxK90YZhZZbfcSJolqrmJ7W7QHVOsPSEdbgzmYlSwtS5nU7yRZQBJM5VKOd6DvMZkloAdHPlMQdriszHetw7Pj1wqatBuR7H7n8V3xc5mLYAdSAvDqqTa2k98dO2NrWgHyr2kt8ZdctVVodvFEwb1emEVOAmOtbmJVtPaBM76wCNVvbCGioFxaoZCDqj//vJZ1FCbDm+t+ZsAmW/pR/oJ5Gm1PoAws+biVEOolCAAAAAElFTkSuQmCC" alt="Logo" class="logo-img">
+      <div>
+        <h1 class="site-title">Hiring Hub</h1>
+        <p class="site-tagline">Government of RAJASTHAN</p>
+      </div>
+    </div>
+    
+    
+    <nav class="nav">
+      <ul>
+        <li><a id="a" href="admin.html">Home</a></li>
+        <li><a id="b" href="dashboard1.html">Jobs</a></li>
+        <li><a id="d" href="jobapplications.html">Job Applications</a></li>
+
+        
+      </ul>
+    </nav>
+    <!-- Get Started Button -->
+    <div class="cta-button">
+      <a href="index.html" class="btn">Log out</a>
+    </div>
+  </div>
+  </header>
+
+  <!-- Side Menu -->
+  <nav class="side-menu" id="sideMenu">
+    <div class="close-btn" id="closeBtn">&times;</div>
+    <ul>
+      <li>
+        <a href="login1.html" class="menu-item account-item">
+          <strong>Account</strong>
+          <span id="userEmail"></span>
+          <span class="arrow-box">&rarr;</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html" class="menu-item account-item" id="logoutLink">Logout</a>
+      </li>
+      <li>
+        <a href="#" class="menu-item account-item">
+          <strong>Help</strong>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <script>
+    // Menu toggle
+    const menuIcon = document.getElementById("menuIcon");
+    const sideMenu = document.getElementById("sideMenu");
+    const closeBtn = document.getElementById("closeBtn");
+
+    menuIcon.addEventListener("click", () => {
+      sideMenu.classList.add("open");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+
+           // Set dynamic links
+           const urlParams = new URLSearchParams(window.location.search);
+     const employerId = urlParams.get('employer_id');   
+  const vaLink = document.getElementById('a');
+  const homeLink = document.getElementById('b');
+  const jobLink = document.getElementById('c');
+  const subsLink =document.getElementById('d');
+
+
+  if (vaLink && homeLink && jobLink && subsLink) {
+    vaLink.href = `dashboard2.html?employer_id=${employerId}`;
+    homeLink.href = `post-job2.html?employer_id=${employerId}`;
+    jobLink.href= `manage-job2.html?employer_id=${employerId}`;
+    subsLink.href= `jobapplications2.html?employer_id=${employerId}`;
+ 
+  }
+    </script>
+
+<br></br><div class="container mt-4">
+  <div class="mb-3">
+    <div class="input-group mb-2">
+      <input type="text" id="nameInput" class="form-control" placeholder="Search by name">
+      <input type="text" id="cgpaInput" class="form-control" placeholder="Search by CGPA">
+      <input type="text" id="companyInput" class="form-control" placeholder="Search by Company">
+      <button class="btn btn-outline-primary" onclick="handleSearch()">Search</button>
+      <button class="btn btn-outline-secondary" onclick="fetchApplications()">Reset</button>
+    </div>
+  </div>
+  
+    <h3>Job Applications</h3>
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>CGPA</th>
+          <th>Company</th>
+          <th>Status</th>
+          <th>View Applications</th>
+        </tr>
+      </thead>
+      <tbody id="applicationsTable">
+        <!-- Dynamically load applications -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="position-fixed">
+    <!-- Toasts will be dynamically added here -->
+  </div>
+
+  
+
+  <script>
+ async function fetchApplications(name = '', cgpa = '', company = '') {
+  const urlParams = new URLSearchParams(window.location.search);
+  const employer_id = urlParams.get('employer_id'); // ✅ Get employer_id from URL
+
+  let url = 'http://localhost:3001/api/applications';
+  const params = new URLSearchParams();
+
+  if (name) params.append('name', name);
+  if (cgpa) params.append('cgpa', cgpa);
+  if (company) params.append('company', company);
+  if (employer_id) params.append('employer_id', employer_id); // ✅ Add employer_id
+
+  if ([...params].length > 0) {
+    url += `?${params.toString()}`;
+  }
+
+  const response = await fetch(url);
+  const applications = await response.json();
+
+  const applicationsTable = document.getElementById('applicationsTable');
+  applicationsTable.innerHTML = applications.map(application => `
+    <tr>
+      <td>${application.name}</td>
+      <td>${application.cgpa}</td>
+      <td>${application.company}</td>
+      <td>
+        <button class="btn btn-primary btn-sm" disabled>${application.status}</button>
+      </td>
+    
+      <td>
+        <a href="app-details.html?application_id=${application.application_id}&employer_id=${application.employer_id}"" class="btn btn-primary btn-sm">View Details</a>
+      </td>
+    </tr>
+  `).join('');
+}
+
+
+function handleSearch() {
+  const name = document.getElementById('nameInput').value.trim();
+  const cgpa = document.getElementById('cgpaInput').value.trim();
+  const company = document.getElementById('companyInput').value.trim();
+  fetchApplications(name, cgpa, company);
+}
+
+    async function updateApplicationStatus(applicationId, status) {
+      // Send a request to update the application status (approve/reject)
+      const response = await fetch(`http://localhost:3001/api/applications/${applicationId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+
+      const result = await response.json();
+     
+    }
+
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toast-container');
+
+      // Create a new toast element
+      const toast = document.createElement('div');
+      toast.classList.add('toast', 'align-items-center', 'text-white', 'bg-' + type, 'border-0', 'mb-2');
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
+      toast.setAttribute('aria-atomic', 'true');
+
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      `;
+
+      // Append toast to the container
+      toastContainer.appendChild(toast);
+
+      // Show the toast
+      const toastInstance = new bootstrap.Toast(toast);
+      toastInstance.show();
+
+      // Remove the toast after it disappears
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);  // Toast will stay for 3 seconds
+    }
+
+    // Initial fetch of all applications
+    fetchApplications();
+  </script>
+
+  <!-- Include Bootstrap JS (Optional for dynamic functionality) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

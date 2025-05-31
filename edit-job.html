@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Job</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #ff7e5f, #feb47b); /* Gradient background */
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center py-10">
+  <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Edit Job</h2>
+    <form id="editJobForm" class="space-y-4">
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700">Job Title</label>
+        <input type="text" id="title" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter job title" required>
+      </div>
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700">Job Description</label>
+        <textarea id="description" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" rows="5" placeholder="Enter job description" required></textarea>
+      </div>
+      <div>
+        <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+        <input type="text" id="location" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter job location" required>
+      </div>
+      <div>
+        <label for="skills" class="block text-sm font-medium text-gray-700">Required Skills</label>
+        <input type="text" id="skills" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g., Java, Python, SQL" required>
+      </div>
+      <div>
+        <label for="salary" class="block text-sm font-medium text-gray-700">Salary</label>
+        <input type="number" id="salary" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter salary in USD" required>
+      </div>
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">Update Job</button>
+    </form>
+  </div>
+
+  <script>
+    const queryParams = new URLSearchParams(window.location.search);
+    const jobId = queryParams.get('jobId');
+
+    // Fetch job details and populate form
+    async function fetchJobDetails() {
+      try {
+        const response = await fetch(`http://localhost:3001/jobs/${jobId}`);
+        const job = await response.json();
+
+        document.getElementById('title').value = job.title;
+        document.getElementById('description').value = job.description;
+        document.getElementById('location').value = job.location;
+        document.getElementById('skills').value = job.skill_set_1;
+        document.getElementById('salary').value = job.salary;
+      } catch (error) {
+        alert('Error fetching job details');
+      }
+    }
+
+    // Update job
+    document.getElementById('editJobForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const payload = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        location: document.getElementById('location').value,
+        skills: document.getElementById('skills').value,
+        salary: document.getElementById('salary').value,
+      };
+
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+    const employerId = urlParams.get('employer_id');
+        const response = await fetch(`http://localhost:3001/jobs/${jobId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+          alert('Job updated successfully!');
+          window.location.href = `manage-job2.html?employer_id=${employerId}`;;
+        } else {
+          alert('Error updating job');
+        }
+      } catch (error) {
+        alert('Error updating job. Please try again later.');
+      }
+    });
+
+    fetchJobDetails();
+  </script>
+</body>
+</html>

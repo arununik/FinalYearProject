@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .container .title {
+            font-size: 25px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .container .title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            width: 30px;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+
+        .content form .user-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0 12px 0;
+        }
+
+        form .user-details .input-box {
+            margin-bottom: 15px;
+            width: calc(100% / 2 - 20px);
+        }
+
+        form .input-box span.details {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .user-details .input-box input {
+            height: 45px;
+            width: 100%;
+            outline: none;
+            font-size: 16px;
+            border-radius: 5px;
+            padding-left: 15px;
+            border: 1px solid #ccc;
+            border-bottom-width: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .user-details .input-box input:focus,
+        .user-details .input-box input:valid {
+            border-color: #9b59b6;
+        }
+
+        form .gender-details .gender-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        form .category {
+            display: flex;
+            width: 80%;
+            margin: 14px 0;
+            justify-content: space-between;
+        }
+
+        form .category label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        form .button {
+            height: 45px;
+            margin: 35px 0;
+        }
+
+        form .button input {
+            height: 100%;
+            width: 100%;
+            border-radius: 5px;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+
+        form .button input:hover {
+            background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+        }
+
+        /* Media Queries */
+        @media (max-width: 584px) {
+            .container {
+                max-width: 100%;
+            }
+
+            form .user-details .input-box {
+                margin-bottom: 15px;
+                width: 100%;
+            }
+
+            form .category {
+                width: 100%;
+            }
+
+            .content form .user-details {
+                max-height: 300px;
+                overflow-y: scroll;
+            }
+
+            .user-details::-webkit-scrollbar {
+                width: 5px;
+            }
+        }
+
+        @media (max-width: 459px) {
+            .container .content .category {
+                flex-direction: column;
+            }
+        }
+        /* Message Styling */
+#message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745; /* Green background */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 1000;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#message.success-message {
+    opacity: 1;
+    visibility: visible;
+}
+
+#message.error-message {
+    background-color: #dc3545; /* Red background for error */
+    opacity: 1;
+    visibility: visible;
+}
+
+#message.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Floating animation */
+@keyframes floatMessage {
+    0% {
+        top: 20px;
+        opacity: 0;
+    }
+    50% {
+        top: 30px;
+        opacity: 1;
+    }
+    100% {
+        top: 20px;
+        opacity: 0;
+    }
+}
+
+#message.show {
+    animation: floatMessage 2s forwards;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="title">Subscription Form</h2>
+
+        <form id="subscriptionForm" method="POST">
+            <div class="user-details">
+                <div class="input-box">
+                    <span class="details">Select Plan:</span>
+                    <select id="plan" name="plan" onchange="updateAmount()">
+                        <option value="Starter Pack">Starter Pack</option>
+                        <option value="Pro Agent">Pro pack</option>
+                        <option value="Elite Agent">Elite pack</option>
+                        <option value="Corporate Partner">Corporate Partner</option>
+                    </select>
+                </div>
+
+                <div class="input-box">
+                    <span class="details">Amount:</span>
+                    <span id="amount"></span>
+                </div>
+            </div>
+
+            <div class="input-box">
+                <span class="details">Select Payment Method:</span>
+                <select id="payment_method" name="payment_method">
+                    <option value="Gpay">Gpay</option>
+                    <option value="Phonepay">Phonepay</option>
+                    <option value="Paytm">Paytm</option>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <span class="details">Enter Card Number (16 digits):</span>
+                <input type="text" id="card_number" name="card_number" placeholder="Enter card number" required>
+            </div>
+
+            <div class="button">
+                <input type="submit" value="Proceed to Payment">
+            </div>
+        </form>
+
+        <div id="message"></div>
+    </div>
+    <div id="message"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to update the amount based on selected plan
+            function updateAmount() {
+                const planSelect = document.getElementById('plan');
+                const plan = planSelect.value;
+    
+                let amount = 0;
+                if (plan === 'Starter Pack') {
+                    amount = 0;
+                } else if (plan === 'Pro pack') {
+                    amount = 49;
+                } else if (plan === 'Elite pack') {
+                    amount = 99;
+                } else if (plan === 'Corporate Partner') {
+                    amount = 199;
+                }
+    
+                document.getElementById('amount').innerText = `$${amount}`;
+            }
+    
+            // Call updateAmount function when page loads
+            updateAmount();
+    
+            // Form submission handler
+            document.getElementById('subscriptionForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                const userId = new URLSearchParams(window.location.search).get('user_id');
+                const plan = document.getElementById('plan').value;
+                const cardNumber = document.getElementById('card_number').value;
+    
+                if (userId) {
+                    document.getElementById('subscriptionForm').action = `http://localhost:3001/api/processPayment/${userId}`;
+                }
+    
+                // Validate card number
+                if (cardNumber.length !== 16 || isNaN(cardNumber)) {
+                    showMessage("Invalid card number. Please check.", "error");
+                    return;
+                }
+    
+                // Send the payment request to the back-end
+                fetch(`http://localhost:3001/api/processPayment/${userId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: plan, // Send the selected plan
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.message === 'Payment successful') {
+                        showMessage('Payment successful!', 'success');
+                        // Redirect to index.html after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    } else {
+                        showMessage('Payment failed. Please try again.', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error during payment processing:', err);
+                    showMessage('Error during payment processing.', 'error');
+                });
+            });
+    
+            // Function to display success/error messages
+            function showMessage(message, type) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.innerHTML = message;
+                messageDiv.classList.add('show'); // Show message
+    
+                if (type === 'error') {
+                    messageDiv.classList.add('error-message');
+                    messageDiv.classList.remove('success-message');
+                } else {
+                    messageDiv.classList.add('success-message');
+                    messageDiv.classList.remove('error-message');
+                }
+    
+                // Hide the message after animation duration (2 seconds)
+                setTimeout(() => {
+                    messageDiv.classList.remove('show');
+                }, 2500); // Hide after 2.5 seconds
+            }
+        });
+    </script>
+    
+    
+</body>
+</html>

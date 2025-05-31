@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employer Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+   function isValidPassword(password) {
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasDigit = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*]/.test(password);
+  
+  return password.length >= minLength && hasUpperCase && hasDigit && hasSpecialChar;
+}
+
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error-message');
+
+      if (!isValidPassword(password)) {
+        errorDiv.textContent = "Password must be at least 8 characters long and contain a special character, number, or uppercase letter.";
+        return;
+      } else {
+        errorDiv.textContent = ""; // Clear error
+      }
+
+      try {
+        const res = await fetch('http://localhost:5000/login1', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password })
+});
+
+const data = await res.json();
+alert(data.message);
+
+if (res.ok) {
+  localStorage.setItem('userEmail', data.email || email);
+  const employerId = data.employer_id || data.id || '';
+  if (employerId) {
+    window.location.href = `dashboard2.html?employer_id=${employerId}`;
+  } else {
+    window.location.href = "dashboard2.html";
+  }
+}
+
+      } catch (error) {
+        alert('Login failed. Please try again later.');
+        console.error(error);
+      }
+    }
+
+    function togglePassword() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function forgotPassword() {
+      const email = prompt('Enter your registered email:');
+      if (email) {
+        const res = await fetch('http://localhost:5000/forgot-password1', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        alert(data.message);
+        if (res.ok) {
+          window.location.href = 'reset1.html';
+        }
+      }
+    }
+  </script>
+<style>
+#chatBtn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#chatContainer {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  width: 300px;
+  max-height: 400px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+#chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+#chatInputContainer {
+  display: flex;
+  border-top: 1px solid #ccc;
+}
+
+#chatInput {
+  flex: 1;
+  border: none;
+  padding: 10px;
+}
+
+#sendBtn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.msg {
+  margin: 5px 0;
+}
+
+.msg.bot { color: #007bff; }
+.msg.user { color: #333; }
+</style>
+</head>
+<body>
+<!-- Chat Button -->
+<button id="chatBtn">💬</button>
+
+<!-- Chat Interface -->
+<div id="chatContainer" style="display:none; flex-direction: column;">
+<div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+<div id="chatInputContainer">
+<input id="chatInput" type="text" placeholder="Ask something..." />
+<button id="sendBtn">Send</button>
+</div>
+</div>
+
+<script>
+const chatBtn = document.getElementById("chatBtn");
+const chatContainer = document.getElementById("chatContainer");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+chatBtn.onclick = () => {
+// Toggle visibility of chat container
+if (chatContainer.style.display === "flex") {
+chatContainer.style.display = "none"; // Hide the chat container
+} else {
+chatContainer.style.display = "flex"; // Show the chat container
+if (chatMessages.children.length === 0) {
+  addMessage("bot", "Hi, how can I help?");
+}
+}
+};
+
+sendBtn.onclick = sendMessage;
+chatInput.addEventListener("keydown", (e) => {
+if (e.key === "Enter") sendMessage();
+});
+
+function addMessage(sender, text) {
+const msg = document.createElement("div");
+msg.className = `msg ${sender}`;
+msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+chatMessages.appendChild(msg);
+chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendMessage() {
+const message = chatInput.value.trim();
+if (!message) return;
+addMessage("user", message);
+chatInput.value = "";
+
+try {
+  const res = await fetch("http://localhost:3000/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+  console.log(data); // Check the response from the server
+  addMessage("bot", data.reply);
+} catch (err) {
+  console.error("Error:", err);
+}
+}
+</script>
+
+<body class="bg-gray-100 min-h-screen relative">
+
+  <!-- Home Button -->
+  <a href="index.html" class="absolute top-4 left-4 text-blue-600 font-semibold underline hover:text-blue-800">
+    Home
+  </a>
+
+  <!-- Login Container -->
+  <div class="flex justify-center items-center h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-center">Employer Login</h2>
+      <form onsubmit="handleLogin(event)">
+        <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded mb-4" required />
+        <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded mb-2" required />
+        <div id="error-message" class="text-sm text-red-500 mb-2"></div>
+        <div class="flex items-center mb-4">
+          <input type="checkbox" onclick="togglePassword()"> <span class="ml-2">Show Password</span>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded mb-4">Login</button>
+      </form>
+      <button onclick="forgotPassword()" class="w-full text-blue-600 underline">Forgot Password?</button>
+      <p class="text-sm mt-4">Don't have an account? <a href="signup2.html" class="text-blue-600">Signup</a></p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Listings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #ff7e5f, #feb47b); /* Gradient background */
+    }
+  </style>
+</head>
+<body class="min-h-screen py-10 flex justify-center items-center">
+  <div class="container mx-auto max-w-6xl">
+    <h2 class="text-center text-3xl font-semibold text-gray-800 mb-4">Job Listings</h2>
+
+    <!-- Job Search Form -->
+    <form class="mb-6 flex justify-center gap-4" id="jobSearchForm">
+      <input type="text" class="px-4 py-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-500" id="job-title" placeholder="Job Title">
+      <input type="text" class="px-4 py-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-500" id="location" placeholder="Location">
+      <input type="text" class="px-4 py-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-500" id="skills" placeholder="Skills">
+      <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-all" onclick="fetchJobs()">Search</button>
+    </form>
+
+    <!-- Job Listings -->
+    <div id="jobsContainer" class="space-y-6">
+      <!-- Dynamically load job listings here -->
+    </div>
+  </div>
+
+  <script>
+   async function fetchJobs() {
+  // Get search form values
+  const title = document.getElementById('job-title').value;
+  const location = document.getElementById('location').value;
+  const skills = document.getElementById('skills').value;
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('user_id');
+  
+  document.getElementById('va').href = `viewapplications.html?user_id=${userId}`;
+  document.getElementById('home').href = `index1.html?user_id=${userId}`;
+  
+  // API Endpoint with optional query params
+  const response = await fetch(`http://localhost:3001/api/jobs?title=${title}&location=${location}&skills=${skills}`);
+  const jobs = await response.json();
+
+  // Populate the jobs container with details
+  const jobsContainer = document.getElementById('jobsContainer');
+  jobsContainer.innerHTML = jobs.map(job => `
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h3 class="text-xl font-semibold text-gray-800">${job.title}</h3>
+      <p class="text-gray-600 mt-2"><strong>Company:</strong> ${job.company}</p>
+      <p class="text-gray-600 mt-1"><strong>Location:</strong> ${job.location}</p>
+      <div class="mt-4 text-center">
+        <a href="job-details.html?job_id=${job.job_id}&user_id=${userId}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-all">View Details</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+    // Initial load
+    fetchJobs();
+  </script>
+</body>
+</html>

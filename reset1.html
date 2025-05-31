@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function togglePassword() {
+      const pass = document.getElementById('newPassword');
+      pass.type = pass.type === 'password' ? 'text' : 'password';
+    }
+
+    function isValidPassword(password) {
+      const minLength = 8;
+      const pattern = /(?=.*[A-Z])|(?=.*\d)|(?=.*[!@#$%^&*])/;
+      return password.length >= minLength && pattern.test(password);
+    }
+
+    async function resetPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const code = document.getElementById('code').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const errorMsg = document.getElementById('error-message');
+
+      if (!isValidPassword(newPassword)) {
+        errorMsg.textContent = "Password must be at least 8 characters and contain a number, special character, or uppercase letter.";
+        return;
+      } else {
+        errorMsg.textContent = "";
+      }
+
+      const res = await fetch('http://localhost:5000/reset-password1', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, code, newPassword })
+      });
+
+      const data = await res.json();
+      alert(data.message || data.error);
+
+      if (data.message === "Password reset successfully") {
+        window.location.href = "login2.html";
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 min-h-screen relative">
+
+  <!-- Home Button -->
+  <a href="index.html" class="absolute top-4 left-4 text-blue-600 font-semibold underline hover:text-blue-800">
+    Home
+  </a>
+
+  <!-- Reset Password Form -->
+  <div class="flex justify-center items-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <h2 class="text-2xl font-semibold mb-6 text-center">Reset Password</h2>
+      <form id="resetForm" onsubmit="resetPassword(event)" class="space-y-4">
+        <!-- Email -->
+        <input type="email" id="email" placeholder="Email" required
+          class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+        <!-- Reset Code -->
+        <input type="text" id="code" placeholder="Reset Code" required
+          class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+
+        <!-- New Password -->
+        <input type="password" id="newPassword" placeholder="New Password" required
+          class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"/>
+        
+        <!-- Inline Error Message -->
+        <div id="error-message" class="text-sm text-red-500"></div>
+
+        <!-- Show Password Checkbox -->
+        <div class="flex items-center">
+          <input type="checkbox" onclick="togglePassword()" class="mr-2"> 
+          <span>Show Password</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+          class="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 focus:outline-none">
+          Reset Password
+        </button>
+      </form>
+
+      <!-- Back to login -->
+      <p class="text-center mt-4 text-sm">
+        Back to <a href="login2.html" class="text-blue-600 hover:text-blue-800">Login</a>
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

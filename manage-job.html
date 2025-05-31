@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Hub</title>
+  <link rel="stylesheet" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+</head>
+<body>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      position: fixed; /* Makes the header fixed */
+      top: 0;
+      left: 0;
+      width: 100%; /* Full width of the page */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #ffffff; /* White background */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      z-index: 1000; /* Ensures it stays on top */
+    }
+
+    .menu-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #333; /* Dark bars for hamburger icon */
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .site-title {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    .site-tagline {
+      font-size: 0.9em;
+      color: #666; /* Subtle text color */
+      margin: 0;
+    }
+
+    .icon-placeholder img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .nav ul li a:hover {
+      color: #007bff; /* Highlight color on hover */
+    }
+
+    .cta-button .btn {
+      text-decoration: none;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .cta-button .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px; /* Initially hidden */
+      width: 300px;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      transition: left 0.3s ease-in-out;
+      z-index: 1001;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu .close-btn {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-menu ul li {
+      margin: 15px 0;
+    }
+
+    .side-menu ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .side-menu ul li a:hover {
+      color: #007bff;
+    }
+
+    /* Open Side Menu */
+    .side-menu.open {
+      left: 0; /* Slide into view */
+    }
+
+    /* Add some content below the header for scrolling */
+    .content {
+      padding-top: 100px; /* Space for the fixed header */
+      padding: 20px;
+    }
+  </style>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="menu-icon" id="menuIcon">
+      <!-- 3 Bars (Hamburger Icon) -->
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="header-title">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAc1JREFUWEftl4FNxDAMRX2TcEwCTHIwCTAJxyTAJLAJ9J0aybRO4h9AVIhI1VVqGr/+7zi+nW1s7DbGY38KaG9m12Z2YWaX0/2bu+7ne9mAUYUAeGpEA+5xen6nEo0AEeQ2GQilJCgVaKkMShD0OF1YyPUw/8LM85vJ0ufkB8hJjU1AMQhyFQQqUGUeUOc/BfTuFiYIwaIB1Gty7qf3FcvYUdjBwCKsaA2vJkqmbFOAfDJnklWdf/o4BcgndC1/vGKoiaoM1ETV7lCAfF6QO9jwqznE12V2mTJvpZiiEC8vd4+vM1Ed4p10Qqs5VL5mU5W6QJGsHB+oEg25QpdFVMt88Npp/zJNks4vv+hXgLpbeGTCCBDKUJNqdsFRygG/qQo9Yhk2HDogtXxK90YZhZZbfcSJolqrmJ7W7QHVOsPSEdbgzmYlSwtS5nU7yRZQBJM5VKOd6DvMZkloAdHPlMQdriszHetw7Pj1wqatBuR7H7n8V3xc5mLYAdSAvDqqTa2k98dO2NrWgHyr2kt8ZdctVVodvFEwb1emEVOAmOtbmJVtPaBM76wCNVvbCGioFxaoZCDqj//vJZ1FCbDm+t+ZsAmW/pR/oJ5Gm1PoAws+biVEOolCAAAAAElFTkSuQmCC" alt="Logo" class="logo-img">
+      <div>
+        <h1 class="site-title">Hiring Hub</h1>
+        <p class="site-tagline">Government of RAJASTHAN</p>
+      </div>
+    </div>
+    
+    
+    
+    <!-- Navigation Links -->
+    <nav class="nav">
+      <ul>
+        <li><a href="dashboard1.html">Home</a></li>
+        <li><a href="post-job.html">Post Job</a></li>
+        <li><a href="manage-job.html">Manage Job</a></li>
+        <li><a href="jobapplications.html">Job Applications</a></li>
+        
+      </ul>
+    </nav>
+
+    <!-- Get Started Button -->
+    <div class="cta-button">
+      <a href="index.html" class="btn">Log out</a>
+    </div>
+  </div>
+  </header>
+
+  <!-- Side Menu -->
+  <nav class="side-menu" id="sideMenu">
+    <div class="close-btn" id="closeBtn">&times;</div>
+    <ul>
+      <li>
+        <a href="login1.html" class="menu-item account-item">
+          <strong>Account</strong>
+          <span id="userEmail"></span>
+          <span class="arrow-box">&rarr;</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html" class="menu-item account-item" id="logoutLink">Logout</a>
+      </li>
+      <li>
+        <a href="#" class="menu-item account-item">
+          <strong>Help</strong>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <script>
+    // Menu toggle
+    const menuIcon = document.getElementById("menuIcon");
+    const sideMenu = document.getElementById("sideMenu");
+    const closeBtn = document.getElementById("closeBtn");
+
+    menuIcon.addEventListener("click", () => {
+      sideMenu.classList.add("open");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+    </script>
+
+<br></br>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Manage Jobs</h1>
+    <div id="jobList" class="row"></div>
+  </div>
+
+  <script>
+    // Fetch jobs from the API
+    async function fetchJobs() {
+      try {
+        const response = await fetch('http://localhost:3001/jobs'); // API to get jobs
+        const jobs = await response.json();
+
+        const jobList = document.getElementById('jobList');
+        jobList.innerHTML = '';
+
+        if (jobs.length === 0) {
+          jobList.innerHTML = '<p class="text-center w-100">No jobs available at the moment.</p>';
+          return;
+        }
+
+        jobs.forEach((job) => {
+          const jobCard = `
+            <div class="col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">${job.company}</h5>
+                  <p class="card-text"><strong>Title:</strong>${job.title}</p>
+                  <p class="card-text"><strong>Description:</strong>${job.description}</p>
+                  <p class="card-text"><strong>Location:</strong> ${job.location}</p>
+                  <p class="card-text"><strong>Skills:</strong> ${job.skill_set_1}</p>
+                  <p class="card-text"><strong>Salary:</strong> $${job.salary}</p>
+                  <p class="card-text"><strong>Interview Date:</strong>${job.interview_date}</p>
+                  <p class="card-text"><strong>Type: </strong>${job.interview_type}</p>
+                  <button class="btn btn-warning btn-sm" onclick="editJob(${job.job_id})">Edit</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteJob(${job.job_id})">Delete</button>
+                </div>
+              </div>
+            </div>
+          `;
+          jobList.innerHTML += jobCard;
+        });
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+        document.getElementById('jobList').innerHTML = '<p class="text-center w-100">Error fetching jobs. Please try again later.</p>';
+      }
+    }
+
+    // Delete Job
+    async function deleteJob(jobId) {
+      if (!confirm('Are you sure you want to delete this job?')) return;
+
+      try {
+        const response = await fetch(`http://localhost:3001/jobs/${jobId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          alert('Job successfully deleted!');
+          fetchJobs(); // Refresh job list
+        } else {
+          const result = await response.text();
+          alert('Error deleting job: ' + result);
+        }
+      } catch (error) {
+        alert('Error deleting job. Please try again later.');
+      }
+    }
+
+    // Edit Job
+    function editJob(jobId) {
+      // Redirect to an "edit job" page with the job ID in the query string
+      window.location.href = `edit-job.html?jobId=${jobId}`;
+    }
+
+    // Fetch jobs on page load
+    document.addEventListener('DOMContentLoaded', fetchJobs);
+  </script>
+</body>
+</html>

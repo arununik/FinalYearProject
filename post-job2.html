@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Hub</title>
+  <link rel="stylesheet" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+</head>
+<body>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      position: fixed; /* Makes the header fixed */
+      top: 0;
+      left: 0;
+      width: 100%; /* Full width of the page */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #ffffff; /* White background */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      z-index: 1000; /* Ensures it stays on top */
+    }
+
+    .menu-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #333; /* Dark bars for hamburger icon */
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .site-title {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    .site-tagline {
+      font-size: 0.9em;
+      color: #666; /* Subtle text color */
+      margin: 0;
+    }
+
+    .icon-placeholder img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .nav ul li a:hover {
+      color: #007bff; /* Highlight color on hover */
+    }
+
+    .cta-button .btn {
+      text-decoration: none;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .cta-button .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px; /* Initially hidden */
+      width: 300px;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      transition: left 0.3s ease-in-out;
+      z-index: 1001;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu .close-btn {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-menu ul li {
+      margin: 15px 0;
+    }
+
+    .side-menu ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .side-menu ul li a:hover {
+      color: #007bff;
+    }
+
+    /* Open Side Menu */
+    .side-menu.open {
+      left: 0; /* Slide into view */
+    }
+
+    /* Add some content below the header for scrolling */
+    .content {
+      padding-top: 100px; /* Space for the fixed header */
+      padding: 20px;
+    }
+ 
+    #chatBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #chatContainer {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #chatInput {
+      flex: 1;
+      border: none;
+      padding: 10px;
+    }
+
+    #sendBtn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin: 5px 0;
+    }
+
+    .msg.bot { color: #007bff; }
+    .msg.user { color: #333; }
+  </style>
+</head>
+<body>
+<!-- Chat Button -->
+<button id="chatBtn">💬</button>
+
+<!-- Chat Interface -->
+<div id="chatContainer" style="display:none; flex-direction: column;">
+  <div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+  <div id="chatInputContainer">
+    <input id="chatInput" type="text" placeholder="Ask something..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  const chatBtn = document.getElementById("chatBtn");
+  const chatContainer = document.getElementById("chatContainer");
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+  chatBtn.onclick = () => {
+  // Toggle visibility of chat container
+  if (chatContainer.style.display === "flex") {
+    chatContainer.style.display = "none"; // Hide the chat container
+  } else {
+    chatContainer.style.display = "flex"; // Show the chat container
+    if (chatMessages.children.length === 0) {
+      addMessage("bot", "Hi, how can I help?");
+    }
+  }
+};
+
+  sendBtn.onclick = sendMessage;
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function addMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `msg ${sender}`;
+    msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    addMessage("user", message);
+    chatInput.value = "";
+
+    try {
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      console.log(data); // Check the response from the server
+      addMessage("bot", data.reply);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  }
+</script>
+
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="menu-icon" id="menuIcon">
+      <!-- 3 Bars (Hamburger Icon) -->
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="header-title">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAc1JREFUWEftl4FNxDAMRX2TcEwCTHIwCTAJxyTAJLAJ9J0aybRO4h9AVIhI1VVqGr/+7zi+nW1s7DbGY38KaG9m12Z2YWaX0/2bu+7ne9mAUYUAeGpEA+5xen6nEo0AEeQ2GQilJCgVaKkMShD0OF1YyPUw/8LM85vJ0ufkB8hJjU1AMQhyFQQqUGUeUOc/BfTuFiYIwaIB1Gty7qf3FcvYUdjBwCKsaA2vJkqmbFOAfDJnklWdf/o4BcgndC1/vGKoiaoM1ETV7lCAfF6QO9jwqznE12V2mTJvpZiiEC8vd4+vM1Ed4p10Qqs5VL5mU5W6QJGsHB+oEg25QpdFVMt88Npp/zJNks4vv+hXgLpbeGTCCBDKUJNqdsFRygG/qQo9Yhk2HDogtXxK90YZhZZbfcSJolqrmJ7W7QHVOsPSEdbgzmYlSwtS5nU7yRZQBJM5VKOd6DvMZkloAdHPlMQdriszHetw7Pj1wqatBuR7H7n8V3xc5mLYAdSAvDqqTa2k98dO2NrWgHyr2kt8ZdctVVodvFEwb1emEVOAmOtbmJVtPaBM76wCNVvbCGioFxaoZCDqj//vJZ1FCbDm+t+ZsAmW/pR/oJ5Gm1PoAws+biVEOolCAAAAAElFTkSuQmCC" alt="Logo" class="logo-img">
+      <div>
+        <h1 class="site-title">Hiring Hub</h1>
+        <p class="site-tagline">Government of RAJASTHAN</p>
+      </div>
+    </div>
+    
+    
+    
+      <!-- Navigation Links -->
+      <nav class="nav">
+        <ul>
+          <li><a id="a" href="dashboard2.html">Home</a></li>
+          <li><a id="b" href="post-job2.html">Post Job</a></li>
+          <li><a id="c" href="manage-job2.html">Manage Job</a></li>
+          <li><a id="d" href="jobapplication2.html">Job Applications</a></li>
+  
+          
+        </ul>
+      </nav>
+
+    <!-- Get Started Button -->
+    <div class="cta-button">
+      <a href="index.html" class="btn">Log out</a>
+    </div>
+  </div>
+  </header>
+  <br></br>
+  <br></br>
+  <br></br>
+  
+
+<br>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background: linear-gradient(to right, #ff7e5f, #feb47b); /* Gradient background */
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center py-10">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+      <br></br>
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Post a Job</h2>
+      <form id="jobForm" class="space-y-4">
+        <div>
+          <label for="company" class="block text-sm font-medium text-gray-700">Company Name</label>
+          <input type="text" id="company" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter company name" required>
+        </div>
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700">Job Title</label>
+          <input type="text" id="title" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter job title" required>
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">Job Description</label>
+          <textarea id="description" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" rows="5" placeholder="Enter job description" required></textarea>
+        </div>
+        <div>
+          <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+          <input type="text" id="location" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter job location" required>
+        </div>
+        <div>
+          <label for="skills" class="block text-sm font-medium text-gray-700">Required Skills</label>
+          <input type="text" id="skills" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g., Java, Python, SQL" required>
+        </div>
+        <div>
+          <label for="salary" class="block text-sm font-medium text-gray-700">Salary</label>
+          <input type="number" id="salary" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter salary in Rs" required>
+        </div>
+        <div>
+          <label for="date" class="block text-sm font-medium text-gray-700">Interview Date</label>
+          <input type="text" id="date" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter date" required>
+        </div>
+        <div>
+          <label for="type" class="block text-sm font-medium text-gray-700">Interview Type</label>
+          <select id="type" class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" required>
+            <option value="" disabled selected>Select interview type</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">Post Job</button>
+      </form>
+    </div>
+  
+    <script>
+          // Set dynamic links
+     const urlParams = new URLSearchParams(window.location.search);
+     const employerId = urlParams.get('employer_id');   
+  const vaLink = document.getElementById('a');
+  const homeLink = document.getElementById('b');
+  const jobLink = document.getElementById('c');
+  const subsLink =document.getElementById('d');
+
+
+  if (vaLink && homeLink && jobLink && subsLink) {
+    vaLink.href = `dashboard2.html?employer_id=${employerId}`;
+    homeLink.href = `post-job2.html?employer_id=${employerId}`;
+    jobLink.href= `manage-job2.html?employer_id=${employerId}`;
+    subsLink.href= `jobapplications2.html?employer_id=${employerId}`;
+ 
+  }
+      document.getElementById('jobForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const urlParams = new URLSearchParams(window.location.search);
+      const employerId = urlParams.get('employer_id');
+
+  
+        const payload = {
+
+
+          employer_id: employerId,
+          company: document.getElementById('company').value,
+          title: document.getElementById('title').value,
+          description: document.getElementById('description').value,
+          location: document.getElementById('location').value,
+          skills: document.getElementById('skills').value,
+          salary: document.getElementById('salary').value,
+          date: document.getElementById('date').value,
+          type: document.getElementById('type').value
+        };
+  
+        try {
+          const response = await fetch('http://localhost:3001/api/postJob1', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+  
+          const result = await response.text();
+          if (response.ok) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const employerId = urlParams.get('employer_id');
+            alert('Job successfully posted!');
+            window.location.href = `dashboard2.html?employer_id=${employerId}`;
+          } else {
+            alert('Error: ' + result);
+          }
+        } catch (error) {
+          alert('Error posting job. Please try again later.');
+        }
+      });
+    </script>
+  </body>
+  </html>
+  

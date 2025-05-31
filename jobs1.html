@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Hub</title>
+  <link rel="stylesheet" href="C:\Users\arunn\OneDrive\Desktop\capstone\new\cap3\client\style.css">
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      position: fixed; /* Makes the header fixed */
+      top: 0;
+      left: 0;
+      width: 100%; /* Full width of the page */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #ffffff; /* White background */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      z-index: 1000; /* Ensures it stays on top */
+    }
+
+    .menu-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #333; /* Dark bars for hamburger icon */
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .site-title {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    .site-tagline {
+      font-size: 0.9em;
+      color: #666; /* Subtle text color */
+      margin: 0;
+    }
+
+    .icon-placeholder img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .nav ul li a:hover {
+      color: #007bff; /* Highlight color on hover */
+    }
+
+    .cta-button .btn {
+      text-decoration: none;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .cta-button .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px; /* Initially hidden */
+      width: 300px;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      transition: left 0.3s ease-in-out;
+      z-index: 1001;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu .close-btn {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-menu ul li {
+      margin: 15px 0;
+    }
+
+    .side-menu ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .side-menu ul li a:hover {
+      color: #007bff;
+    }
+
+    /* Open Side Menu */
+    .side-menu.open {
+      left: 0; /* Slide into view */
+    }
+
+    /* Add some content below the header for scrolling */
+    .content {
+      padding-top: 100px; /* Space for the fixed header */
+      padding: 20px;
+    }
+  </style>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="menu-icon" id="menuIcon">
+      <!-- 3 Bars (Hamburger Icon) -->
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="header-title">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAc1JREFUWEftl4FNxDAMRX2TcEwCTHIwCTAJxyTAJLAJ9J0aybRO4h9AVIhI1VVqGr/+7zi+nW1s7DbGY38KaG9m12Z2YWaX0/2bu+7ne9mAUYUAeGpEA+5xen6nEo0AEeQ2GQilJCgVaKkMShD0OF1YyPUw/8LM85vJ0ufkB8hJjU1AMQhyFQQqUGUeUOc/BfTuFiYIwaIB1Gty7qf3FcvYUdjBwCKsaA2vJkqmbFOAfDJnklWdf/o4BcgndC1/vGKoiaoM1ETV7lCAfF6QO9jwqznE12V2mTJvpZiiEC8vd4+vM1Ed4p10Qqs5VL5mU5W6QJGsHB+oEg25QpdFVMt88Npp/zJNks4vv+hXgLpbeGTCCBDKUJNqdsFRygG/qQo9Yhk2HDogtXxK90YZhZZbfcSJolqrmJ7W7QHVOsPSEdbgzmYlSwtS5nU7yRZQBJM5VKOd6DvMZkloAdHPlMQdriszHetw7Pj1wqatBuR7H7n8V3xc5mLYAdSAvDqqTa2k98dO2NrWgHyr2kt8ZdctVVodvFEwb1emEVOAmOtbmJVtPaBM76wCNVvbCGioFxaoZCDqj//vJZ1FCbDm+t+ZsAmW/pR/oJ5Gm1PoAws+biVEOolCAAAAAElFTkSuQmCC" alt="Logo" class="logo-img">
+      <div>
+        <h1 class="site-title">Hiring Hub</h1>
+        <p class="site-tagline">Government of RAJASTHAN</p>
+      </div>
+    </div>
+    
+    
+    
+    <!-- Navigation Links -->
+    <nav class="nav">
+      <ul>
+        <li><a id="home" href="index1.html">Home</a></li>
+        <li><a id="jobb" href="jobs.html">Jobs</a></li>
+        <li><a id="subs" href="subscriptions.html">Subscriptions</a></li>
+      </ul>
+    </nav>
+
+    <!-- Get Started Button -->
+    <div class="cta-button">
+      <a href="viewapplications.html" id="va" class="btn">My Applications</a>
+    </div>
+  </div>
+  </header>
+
+  <!-- Side Menu -->
+  <nav class="side-menu" id="sideMenu">
+    <div class="close-btn" id="closeBtn">&times;</div>
+    <ul>
+      <li>
+        <a href="login.html" class="menu-item account-item">
+          <strong>Account</strong>
+          <span id="userEmail"></span>
+          <span class="arrow-box">&rarr;</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html" class="menu-item account-item" id="logoutLink">Logout</a>
+      </li>
+      <li>
+        <a href="#" class="menu-item account-item">
+          <strong>Help</strong>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <script>
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+        document.getElementById('userEmail').textContent = `(${email})`;
+    }
+
+    // Logout functionality
+    document.getElementById('logoutLink').addEventListener('click', () => {
+        localStorage.removeItem('userEmail');
+        window.location.href = 'login.html';  // Redirect to index.html
+    });
+</script>
+
+  <script>
+    // Menu toggle
+    const menuIcon = document.getElementById("menuIcon");
+    const sideMenu = document.getElementById("sideMenu");
+    const closeBtn = document.getElementById("closeBtn");
+
+    menuIcon.addEventListener("click", () => {
+      sideMenu.classList.add("open");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+  </script>
+
+<div class="container mx-auto mt-5 max-w-4xl">
+    <br>
+    <h2 class="text-center text-3xl font-semibold text-gray-800 mb-4">Job Listings</h2>
+  
+    <!-- FORM -->
+    <form id="jobSearchForm" class="form-inline mb-3 flex justify-center gap-4">
+      <input type="text" id="job-title" class="form-control px-4 py-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Job Title">
+      <input type="text" id="company" class="form-control px-4 py-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Company">
+      <button type="submit" class="btn bg-primary text-white py-2 px-4 rounded hover:bg-primary-dark transition-all">Search</button>
+    </form>
+  
+    <!-- JOB TABLE -->
+    <table class="table table-striped w-full table-auto border-collapse border border-gray-200">
+      <thead>
+        <tr class="text-md font-semibold tracking-wide text-left text-gray-900 bg-light uppercase border-b border-gray-600">
+          <th class="px-4 py-3">Job Title</th>
+          <th class="px-4 py-3">Company</th>
+          <th class="px-4 py-3">Location</th>
+          <th class="px-4 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="jobsTable" class="bg-white">
+        <!-- Jobs load here -->
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    const jobsTable = document.getElementById('jobsTable');
+    const jobTitleInput = document.getElementById('job-title');
+    const companyInput = document.getElementById('company');
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+    const jobTitleFromURL = urlParams.get('title');
+    const companyFromURL = urlParams.get('company');
+  
+    // Set navigation links if available
+     // Set dynamic links
+  const vaLink = document.getElementById('va');
+  const homeLink = document.getElementById('home');
+  const jobLink = document.getElementById('jobb');
+  const subsLink =document.getElementById('subs');
+
+
+  if (vaLink && homeLink && jobLink && subsLink) {
+    vaLink.href = `viewapplications.html?user_id=${userId}`;
+    homeLink.href = `index1.html?user_id=${userId}`;
+    jobLink.href= `jobs.html?user_id=${userId}`;
+    subsLink.href= `subscriptions.html?user_id=${userId}`;
+ 
+  }
+  
+    // Render job rows
+    function renderJobs(jobs) {
+      if (!jobs || jobs.length === 0) {
+        jobsTable.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center px-4 py-3 text-gray-500">No jobs found.</td>
+          </tr>
+        `;
+        return;
+      }
+  
+      jobsTable.innerHTML = jobs.map(job => `
+        <tr class="text-gray-700">
+          <td class="px-4 py-3 border">${job.title}</td>
+          <td class="px-4 py-3 border">${job.company}</td>
+          <td class="px-4 py-3 border">${job.location}</td>
+          <td class="px-4 py-3 border text-center">
+            <a href="job-details.html?job_id=${job.job_id}&user_id=${userId}" class="btn bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark transition-all">View Details</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+  
+    // Fetch jobs from API with title and/or company
+    async function fetchJobs({ title = '', company = '' } = {}) {
+      try {
+        const params = new URLSearchParams();
+        if (title) params.append('title', title);
+        if (company) params.append('company', company);
+  
+        const url = `http://localhost:3001/api/jobs1?${params.toString()}`;
+        const response = await fetch(url);
+        const jobs = await response.json();
+        renderJobs(jobs);
+      } catch (error) {
+        console.error('Error:', error);
+        jobsTable.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center px-4 py-3 text-red-500">Error fetching jobs.</td>
+          </tr>
+        `;
+      }
+    }
+  
+    // On page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const title = jobTitleFromURL || '';
+      const company = companyFromURL || '';
+      jobTitleInput.value = title;
+      companyInput.value = company;
+      fetchJobs({ title, company });
+    });
+  
+    // Handle form search
+    document.getElementById('jobSearchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = jobTitleInput.value.trim();
+      const company = companyInput.value.trim();
+      fetchJobs({ title, company });
+    });
+  </script>
+</body></html>  

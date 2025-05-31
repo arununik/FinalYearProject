@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #chatBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    
+    #chatContainer {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+    
+    #chatInput {
+      flex: 1;
+      border: none;
+      padding: 10px;
+    }
+    
+    #sendBtn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+    
+    .msg {
+      margin: 5px 0;
+    }
+    
+    .msg.bot { color: #007bff; }
+    .msg.user { color: #333; }
+    </style>
+    </head>
+    <body>
+    <!-- Chat Button -->
+    <button id="chatBtn">💬</button>
+    
+    <!-- Chat Interface -->
+    <div id="chatContainer" style="display:none; flex-direction: column;">
+    <div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+    <div id="chatInputContainer">
+    <input id="chatInput" type="text" placeholder="Ask something..." />
+    <button id="sendBtn">Send</button>
+    </div>
+    </div>
+    
+    <script>
+    const chatBtn = document.getElementById("chatBtn");
+    const chatContainer = document.getElementById("chatContainer");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendBtn");
+    chatBtn.onclick = () => {
+    // Toggle visibility of chat container
+    if (chatContainer.style.display === "flex") {
+    chatContainer.style.display = "none"; // Hide the chat container
+    } else {
+    chatContainer.style.display = "flex"; // Show the chat container
+    if (chatMessages.children.length === 0) {
+      addMessage("bot", "Hi, how can I help?");
+    }
+    }
+    };
+    
+    sendBtn.onclick = sendMessage;
+    chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+    });
+    
+    function addMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `msg ${sender}`;
+    msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    addMessage("user", message);
+    chatInput.value = "";
+    
+    try {
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+    
+      const data = await res.json();
+      console.log(data); // Check the response from the server
+      addMessage("bot", data.reply);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+    }
+    </script>
+    
+<body class="min-h-screen flex items-center justify-center py-10">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+    <h2 id="job-title" class="text-2xl font-bold text-center text-gray-800 mb-6"></h2>
+    <p><strong class="font-medium text-gray-700">Company:</strong> <span id="company" class="text-gray-800"></span></p>
+    <p><strong class="font-medium text-gray-700">Location:</strong> <span id="location" class="text-gray-800"></span></p>
+    <p><strong class="font-medium text-gray-700">Salary:</strong> Rs <span id="salary" class="text-gray-800"></span></p>
+    <p><strong class="font-medium text-gray-700">Job Description:</strong> <span id="job-description" class="text-gray-800"></span></p>
+    <p><strong class="font-medium text-gray-700">Required Skills:</strong> <span id="required-skills" class="text-gray-800"></span></p>
+
+    <!-- Apply for Job Button, including user_id and job_id in the URL -->
+    <a href="apply.html" id="apply-btn" class="mt-4 w-full inline-block bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">Apply for this Job</a>
+    <a href="jobs.html" id="jobs-btn" class="mt-2 w-full inline-block bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-200">Back to Listings</a>
+
+    <!-- Status message -->
+    <div id="status-message" class="mt-3"></div>
+  </div>
+
+  <script>
+    window.onload = async function() {
+      // Extract the user_id, job_id, and status from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const jobId = urlParams.get('job_id');
+      const userId = urlParams.get('user_id');
+      const status = urlParams.get('status'); // "success" or "failure"
+
+      if (!jobId || !userId) {
+        alert("Job ID or User ID is missing!");
+        return;
+      }
+
+      try {
+        // Fetch job details from the server
+        const response = await fetch(`http://localhost:3001/api/jobDetails/${jobId}`);
+        
+        if (!response.ok) {
+          throw new Error('Job not found');
+        }
+
+        const jobDetails = await response.json();
+
+        // Populate the page with the job details
+        document.getElementById('job-title').innerText = jobDetails.title;
+        document.getElementById('company').innerText = jobDetails.company;
+        document.getElementById('location').innerText = jobDetails.location;
+        document.getElementById('salary').innerText = jobDetails.salary;
+        document.getElementById('job-description').innerText = jobDetails.description;
+        document.getElementById('required-skills').innerText = jobDetails.skill_set_1;
+
+        // Set the apply button URL with both user_id and job_id
+        document.getElementById('apply-btn').href = `apply.html?user_id=${userId}&job_id=${jobId}`;
+        document.getElementById('jobs-btn').href = `jobs.html?user_id=${userId}&job_id=${jobId}`;
+
+        // Check if the user has already applied for the job
+        const checkResponse = await fetch(`http://localhost:3001/api/checkApplicationStatus?user_id=${userId}&job_id=${jobId}`);
+        const checkResult = await checkResponse.json();
+
+        if (checkResult.hasApplied) {
+          // Update UI if the user has already applied
+          document.getElementById('apply-btn').innerText = 'Applied';
+          document.getElementById('apply-btn').classList.remove('bg-blue-500');
+          document.getElementById('apply-btn').classList.add('bg-gray-500');
+          document.getElementById('apply-btn').setAttribute('disabled', 'true'); // Disable the button
+          document.getElementById('status-message').innerHTML = '<div class="alert alert-success bg-green-500 text-white py-2 px-4 rounded-md shadow-md">You have already applied for this job.</div>';
+        } else {
+          // Status message for application success or failure
+          const statusMessage = document.getElementById('status-message');
+          if (status === 'success') {
+            statusMessage.innerHTML = '<div class="alert alert-success bg-green-500 text-white py-2 px-4 rounded-md shadow-md">You have successfully applied for this job!</div>';
+            document.getElementById('apply-btn').innerText = 'Applied';
+            document.getElementById('apply-btn').classList.remove('bg-blue-500');
+            document.getElementById('apply-btn').classList.add('bg-gray-500');
+            document.getElementById('apply-btn').setAttribute('disabled', 'true'); // Disable the button
+          } else if (status === 'failure') {
+            statusMessage.innerHTML = '<div class="alert alert-danger bg-red-500 text-white py-2 px-4 rounded-md shadow-md">Application failed. Please try again.</div>';
+          }
+        }
+        
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+        alert("An error occurred while fetching job details.");
+      }
+    }
+  </script>
+</body>
+</html>

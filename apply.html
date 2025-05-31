@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Application</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+    }
+  </style>
+</head>
+<body class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="container bg-white rounded shadow-lg p-4" style="max-width: 500px;">
+    <h2 class="text-center text-primary mb-4">Apply for Job</h2>
+    <form id="applicationForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name" required>
+      </div>
+      <div class="form-group">
+        <label for="education">Education</label>
+        <input type="text" id="education" name="education" class="form-control" placeholder="Enter your education" required>
+      </div>
+      <div class="form-group">
+        <label for="experience">Experience (years)</label>
+        <input type="number" id="experience" name="experience" class="form-control" placeholder="Enter your experience" required>
+      </div>
+      <div class="form-group">
+        <label for="skills">Skill Set</label>
+        <textarea id="skills" name="skills" class="form-control" rows="3" placeholder="List your skills"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="cgpa">CGPA</label>
+        <input type="number" step="0.01" id="cgpa" name="cgpa" class="form-control" placeholder="Enter your CGPA" required>
+      </div>
+      <div class="form-group">
+        <label for="contact">Contact Number</label>
+        <input type="text" id="contact" name="contact" class="form-control" placeholder="Enter your contact number" required>
+      </div>
+      <div class="form-group">
+        <label for="resume">Upload Resume</label>
+        <input type="file" id="resume" name="resume" accept=".pdf, .doc, .docx" class="form-control-file" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Submit Application</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('applicationForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('user_id');
+      const jobId = urlParams.get('job_id');
+      if (!userId || !jobId) {
+        alert("Missing user_id or job_id in the URL!");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("user_id", userId);
+      formData.append("job_id", jobId);
+      formData.append("name", document.getElementById('name').value);
+      formData.append("education", document.getElementById('education').value);
+      formData.append("experience", document.getElementById('experience').value);
+      formData.append("skills", document.getElementById('skills').value);
+      formData.append("cgpa", document.getElementById('cgpa').value);
+      formData.append("contact", document.getElementById('contact').value);
+      formData.append("resume", document.getElementById('resume').files[0]);
+      try {
+        const response = await fetch('http://localhost:3001/api/applyJob1', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+        if (response.ok) {
+          window.location.href = `job-details.html?user_id=${userId}&job_id=${jobId}&status=success`;
+        } else {
+          window.location.href = `job-details.html?user_id=${userId}&job_id=${jobId}&status=failure`;
+        }
+      } catch (error) {
+        alert('Error submitting application. Please try again later.');
+        console.error('Error during submission:', error);
+      }
+    });
+    window.onload = async function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('user_id');
+      const jobId = urlParams.get('job_id');
+      const response = await fetch(`http://localhost:3001/api/checkApplicationStatus?user_id=${userId}&job_id=${jobId}`);
+      const result = await response.json();
+      if (result.hasApplied) {
+        document.getElementById('applicationForm').innerHTML = `
+          <div class="alert alert-info text-center">You have already applied for this job!</div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

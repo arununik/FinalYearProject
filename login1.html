@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <style>
+        #chatBtn {
+          position: fixed;
+          bottom: 20px;
+          left: 20px;
+          background: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          font-size: 24px;
+          cursor: pointer;
+          z-index: 1000;
+        }
+        
+        #chatContainer {
+          display: none;
+          flex-direction: column;
+          position: fixed;
+          bottom: 80px;
+          left: 20px;
+          width: 300px;
+          max-height: 400px;
+          background: #fff;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);
+          z-index: 1000;
+        }
+        
+        #chatMessages {
+          flex: 1;
+          overflow-y: auto;
+          padding: 10px;
+        }
+        
+        #chatInputContainer {
+          display: flex;
+          border-top: 1px solid #ccc;
+        }
+        
+        #chatInput {
+          flex: 1;
+          border: none;
+          padding: 10px;
+        }
+        
+        #sendBtn {
+          background: #007bff;
+          color: #fff;
+          border: none;
+          padding: 10px 15px;
+          cursor: pointer;
+        }
+        
+        .msg {
+          margin: 5px 0;
+        }
+        
+        .msg.bot { color: #007bff; }
+        .msg.user { color: #333; }
+        </style>
+        </head>
+        <body>
+        <!-- Chat Button -->
+        <button id="chatBtn">💬</button>
+        
+        <!-- Chat Interface -->
+        <div id="chatContainer" style="display:none; flex-direction: column;">
+        <div id="chatMessages" style="overflow-y: auto; max-height: 300px;"></div>
+        <div id="chatInputContainer">
+        <input id="chatInput" type="text" placeholder="Ask something..." />
+        <button id="sendBtn">Send</button>
+        </div>
+        </div>
+        
+        <script>
+        const chatBtn = document.getElementById("chatBtn");
+        const chatContainer = document.getElementById("chatContainer");
+        const chatMessages = document.getElementById("chatMessages");
+        const chatInput = document.getElementById("chatInput");
+        const sendBtn = document.getElementById("sendBtn");
+        chatBtn.onclick = () => {
+        // Toggle visibility of chat container
+        if (chatContainer.style.display === "flex") {
+        chatContainer.style.display = "none"; // Hide the chat container
+        } else {
+        chatContainer.style.display = "flex"; // Show the chat container
+        if (chatMessages.children.length === 0) {
+          addMessage("bot", "Hi, how can I help?");
+        }
+        }
+        };
+        
+        sendBtn.onclick = sendMessage;
+        chatInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+        });
+        
+        function addMessage(sender, text) {
+        const msg = document.createElement("div");
+        msg.className = `msg ${sender}`;
+        msg.textContent = `${sender === "bot" ? "Bot" : "You"}: ${text}`;
+        chatMessages.appendChild(msg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+        addMessage("user", message);
+        chatInput.value = "";
+        
+        try {
+          const res = await fetch("http://localhost:3000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
+          });
+        
+          const data = await res.json();
+          console.log(data); // Check the response from the server
+          addMessage("bot", data.reply);
+        } catch (err) {
+          console.error("Error:", err);
+        }
+        }
+        </script>
+    <a href="index.html" class="absolute top-4 left-4 text-blue-600 font-semibold underline hover:text-blue-800">
+        Home
+      </a>
+    
+
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">Admin Login</h2>
+
+    <!-- Step 1: Email Input -->
+    <form id="emailForm" onsubmit="sendLoginCode(event)">
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter your admin email"
+        class="w-full p-2 border rounded mb-4"
+        required
+      />
+      <div id="email-error" class="text-sm text-red-500 mb-2"></div>
+      <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">
+        Send Code
+      </button>
+    </form>
+
+    <!-- Step 2: Code Verification -->
+    <form id="codeForm" onsubmit="verifyLoginCode(event)" style="display: none;">
+      <input
+        type="text"
+        id="code"
+        placeholder="Enter the code sent to your email"
+        class="w-full p-2 border rounded mb-4"
+        required
+      />
+      <button type="submit" class="w-full bg-green-600 text-white p-2 rounded">
+        Verify and Login
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const serverUrl = 'http://localhost:5000'; // Update if needed
+
+    async function sendLoginCode(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const errorDiv = document.getElementById('email-error');
+
+      try {
+        const res = await fetch(`${serverUrl}/send-code`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          errorDiv.textContent = data.message;
+          return;
+        }
+
+        alert(data.message);
+        errorDiv.textContent = "";
+        document.getElementById('emailForm').style.display = 'none';
+        document.getElementById('codeForm').style.display = 'block';
+      } catch (err) {
+        errorDiv.textContent = 'Server error while sending code.';
+        console.error(err);
+      }
+    }
+
+    async function verifyLoginCode(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const code = document.getElementById('code').value;
+
+      try {
+        const res = await fetch(`${serverUrl}/enter-code`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.message || 'Code verification failed');
+          return;
+        }
+
+        alert(data.message);
+        window.location.href = 'admin.html';
+      } catch (err) {
+        alert('Error verifying code');
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
